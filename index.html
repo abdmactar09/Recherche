@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brave Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            padding: 20px;
+            text-align: center;
+            color: #fff;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav li {
+            display: inline-block;
+            margin-right: 20px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .recherche {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #recherche {
+            width: 50%;
+            height: 30px;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        #rechercher {
+            background-color: #337ab7;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #rechercher:hover {
+            background-color: #23527c;
+        }
+
+        .result {
+            margin-bottom: 20px;
+        }
+
+        .result h2 {
+            margin-top: 0;
+        }
+
+        .result a {
+            text-decoration: none;
+            color: #337ab7;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#">Accueil</a></li>
+                <li><a href="#">À propos</a></li>
+                <li><a href="#">Aide</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="recherche">
+            <input type="search" id="recherche" placeholder="Rechercher sur Brave">
+            <button id="rechercher">Rechercher</button>
+        </section>
+        <section class="resultats" id="resultats">
+            <!-- Les résultats de la recherche seront affichés ici -->
+        </section>
+    </main>
+    <script>
+        // Récupère les éléments HTML nécessaires
+        const rechercheInput = document.getElementById('recherche');
+        const rechercherButton = document.getElementById('rechercher');
+        const resultatsSection = document.getElementById('resultats');
+
+        // Définit la fonction de recherche
+        function recherche() {
+          // Récupère la valeur de recherche saisie par l'utilisateur
+          const rechercheQuery = rechercheInput.value.trim();
+
+          // Vérifie si la valeur de recherche est vide
+          if (rechercheQuery === '') {
+            return;
+          }
+
+          // Crée l'URL de recherche pour l'API de Brave
+          const apiUrl = `https://search.brave.com/api/search?q=${rechercheQuery}`;
+
+          // Envoie la requête à l'API de Brave
+          fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+              // Récupère les résultats de recherche
+              const results = data.results;
+
+              // Crée le HTML pour afficher les résultats
+              let resultsHtml = '';
+              results.forEach(result => {
+                resultsHtml += `
+                  <div class="result">
+                    <h2><a href="${result.url}">${result.title}</a></h2>
+                    <p>${result.description}</p>
+                  </div>
+                `;
+              });
+
+              // Affiche les résultats sur la page
+              resultatsSection.innerHTML = resultsHtml;
+            })
+            .catch(error => console.error('Erreur lors de la recherche:', error));
+        }
+
+        // Ajoute un événement de clic sur le bouton de recherche
+        rechercherButton.addEventListener('click', recherche);
+
+        // Ajoute un événement de pression de la touche Entrée sur l'input de recherche
+        rechercheInput.addEventListener('keypress', event => {
+          if (event.key === 'Enter') {
+            recherche();
+          }
+        });
+    </script>
+</body>
+  </html>
